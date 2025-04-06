@@ -1,5 +1,5 @@
 // App.js
-import React from 'react';
+import React, {useState}  from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import './styles/styles.css'; // Import your custom CSS
 import Navbar from './components/Navbar';
@@ -10,11 +10,24 @@ import DevicesAtRisk from './components/BandwidthUsage';
 import ConsoleOutput from './components/console';
 import FetchDataButton from "./components/fetchData";
 import SystemData from './components/systemData';
+import RouterInformation from './components/RouterInformation';
 
 
 function App() {
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+
+
   return (
-    <div>
+
+    !formSubmitted ? 
+      (
+        <div>
+          <RouterInformation onFormSubmit = {() => setFormSubmitted(true)}/>
+        </div>
+      ) : (
+
+      <div>
       <Navbar />
       <div className="container mt-4">
         <div className="row">
@@ -32,7 +45,9 @@ function App() {
           <SystemData />
         </div>
       </div>
-    </div>
+      </div>
+      )
+
   );
 }
 
