@@ -7,41 +7,37 @@ const RouterInformation = ({ onFormSubmit }) => {
   const [password, setPassword] = useState("");
   const [router, setRouter] = useState("mango");
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/send_router_information", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // 👈 Needed for Flask to parse JSON
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          ip_address: ipAddress,
+          router: router,
+        }),
+      });
+  
+      const data = await response.json();
+      if (data.message === "success") {
+        onFormSubmit();
+      }
+
+      if (response.status === 401) {
+        alert("Invalid username or password.");
+        return;
+      }
       
-      e.preventDefault();
-
-
-      try {
-
-        
-          const response = await fetch("http://127.0.0.1:5000/api/send_router_information",{
-            method: "POST",
-            body: JSON.stringify({
-
-              username: username,
-              password: password,
-              ip_address: ipAddress,
-              router: router
-
-            })
-
-          });
-
-          const data = await response.json();
-          if(data.message === "success"){
-            onFormSubmit();
-          }
-
-      }
-      catch(error){
-        console.error("Error sending router information:", error);
-      }
-
-
-
-
-    };
+    } catch (error) {
+      console.error("Error sending router information:", error);
+    }
+  };
 
     const handleIpChange = (e) => {
 

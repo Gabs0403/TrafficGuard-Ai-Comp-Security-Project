@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from getRouterData import get_router_data_via_ssh
 import sqlite3
@@ -9,30 +9,57 @@ CORS(app)  # Enable CORS to allow requests from the React app
 # Router connection details
 router_ip = "192.168.1.1"
 username = "root"
-password = "Paulo@123"
+password = "POLITE_H@CKS557*"
 
 # Commands
-commands = {
-    "cpu_usage": "top -bn1 | grep 'CPU:'",
-    "memory_usage": "free",
-    "wireless_clients": "iw dev wlan0 station dump",  # Replace wlan0 with your interface name
-    "firewall_rules": "iptables -L -v",
-    "uptime_load": "uptime",
-    "network_config": "ifconfig",
-    "device_list": "cat /tmp/dhcp.leases",
-    "log_output": "logread",
-    "bandwidth": "cat /proc/net/dev"
+router_commands_map = {
+    "mango": {
+        "cpu_usage": "top -bn1 | grep 'CPU:'",
+        "memory_usage": "free",
+        "wireless_clients": "iw dev wlan0 station dump",
+        "firewall_rules": "iptables -L -v",
+        "uptime_load": "uptime",
+        "network_config": "ifconfig",
+        "device_list": "cat /tmp/dhcp.leases",
+        "log_output": "logread",
+        "bandwidth": "cat /proc/net/dev"
+    },
+    # Add other routers here if needed
+    # "some_other_router": { ... }
 }
+
+current_commands = {}  # global placeholder for selected router's command set
+
+# Get information from router
+@app.route("/api/send_router_information", methods=["POST"])
+def receive_router_info():
+    data = request.get_json()
+
+    # Expected credentials
+    expected_username = "root"
+    expected_password = "POLITE_H@CKS557*"
+
+    # Check credentials
+    if data.get("username") != expected_username or data.get("password") != expected_password:
+        return jsonify({"message": "unauthorized"}), 401
+
+    # Get User inputs {'username': , 'password': ', 'ip_address': , 'router': }
+    router = data.get("router")
+    router_ip = data.get("ip_address") #global
+    
+    current_commands = router_commands_map[router] #global
+
+    return jsonify({"message": "success"})
 
 
 @app.route('/api/data', methods=['GET'])
-def get_data():
+def get_data(commands):
     print('Request received!')
     try:
         # Fetch router data
-        network_log = get_router_data_via_ssh(router_ip, username, password, commands["log_output"])
-        device_list = get_router_data_via_ssh(router_ip, username, password, commands["device_list"])
-        general_info = get_router_data_via_ssh(router_ip, username, password, commands["network_config"])
+        network_log = get_router_data_via_ssh(router_ip, username, password, current_commands["log_output"])
+        device_list = get_router_data_via_ssh(router_ip, username, password, current_commands["device_list"])
+        general_info = get_router_data_via_ssh(router_ip, username, password, current_commands["network_config"])
 
         # Format the data to send as a JSON response
         data = {
