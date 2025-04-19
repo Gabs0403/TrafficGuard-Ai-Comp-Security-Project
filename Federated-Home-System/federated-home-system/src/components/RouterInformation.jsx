@@ -17,10 +17,10 @@ const RouterInformation = ({ onFormSubmit }) => {
           "Content-Type": "application/json", // 👈 Needed for Flask to parse JSON
         },
         body: JSON.stringify({
-          username: username,
-          password: password,
-          ip_address: ipAddress,
-          router: router,
+          username: username, // input username 
+          password: password, // input password
+          ip_address: ipAddress, // input ipaddress
+          router: router, // input router
         }),
       });
   
@@ -100,6 +100,7 @@ const RouterInformation = ({ onFormSubmit }) => {
             </label>
             <select id="router" name="router" className="form-select" onChange={handleRouterChange}>
               <option value="mango">Mango Router</option>
+              <option value="gl i-net">GL iNet Router</option>
             </select>
           </div>
 

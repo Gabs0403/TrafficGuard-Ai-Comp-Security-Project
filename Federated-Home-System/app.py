@@ -26,6 +26,7 @@ router_commands_map = {
     },
     # Add other routers here if needed
     # "some_other_router": { ... }
+
 }
 
 current_commands = {}  # global placeholder for selected router's command set
