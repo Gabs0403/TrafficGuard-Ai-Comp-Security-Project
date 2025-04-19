@@ -1,5 +1,5 @@
 // App.js
-import React, {useState}  from 'react';
+import React, {useState, useEffect}  from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import './styles/styles.css'; // Import your custom CSS
 import Navbar from './components/Navbar';
@@ -16,7 +16,12 @@ import RouterInformation from './components/RouterInformation';
 function App() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-
+  useEffect(() => {
+    const storedStatus = localStorage.getItem("isFormSubmitted");
+    if (storedStatus === "true") {
+      setFormSubmitted(true);
+      }
+    }, []);
 
   return (
 

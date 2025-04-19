@@ -26,6 +26,7 @@ const RouterInformation = ({ onFormSubmit }) => {
   
       const data = await response.json();
       if (data.message === "success") {
+        localStorage.setItem("isFormSubmitted", "true");
         onFormSubmit();
       }
 
