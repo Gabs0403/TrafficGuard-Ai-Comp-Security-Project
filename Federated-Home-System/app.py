@@ -2,12 +2,16 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from getRouterData import get_router_data_via_ssh
 import sqlite3
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow requests from the React app
 
+load_dotenv()
+
 # Router connection details
-router_ip = "192.168.1.1"
+router_ip = ""
 username = "root"
 password = "POLITE_H@CKS557*"
 
@@ -44,8 +48,8 @@ def receive_router_info():
     data = request.get_json()
  
     # Expected credentials
-    expected_username = "root"
-    expected_password = "POLITE_H@CKS557*"
+    expected_username = os.getenv("EXPECTED_USERNAME")
+    expected_password = os.getenv("EXPECTED_PASSWORD")
  
     # Check credentials
     if data.get("username") != expected_username or data.get("password") != expected_password:
@@ -53,16 +57,15 @@ def receive_router_info():
  
     # Get User inputs {'username': , 'password': ', 'ip_address': , 'router': }
     router = data.get("router")
+
+    # Setting Global Variables
+    global router_ip
     router_ip = data.get("ip_address") #global
      
     global commands 
     commands = router_commands_map[router] #global
 
-    print('.')
-    print('.')
     print(commands)
-    print('.')
-    print('.')
  
     return jsonify({"message": "success"})
 
