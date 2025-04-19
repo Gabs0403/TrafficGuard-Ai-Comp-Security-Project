@@ -14,10 +14,18 @@ import RouterInformation from './components/RouterInformation';
 
 
 function App() {
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
 
 
   return (
+
+    !formSubmitted ? 
+      (
+        <div>
+          <RouterInformation onFormSubmit = {() => setFormSubmitted(true)}/>
+        </div>
+      ) : (
 
       <div>
       <Navbar />
@@ -39,6 +47,8 @@ function App() {
       </div>
       </div>
       )
+
+  );
 }
 
 export default App;
