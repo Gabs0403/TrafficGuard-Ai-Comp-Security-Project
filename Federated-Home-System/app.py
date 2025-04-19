@@ -37,7 +37,7 @@ def receive_router_info():
 
     # Expected credentials
     expected_username = "root"
-    expected_password = "POLITE_H@CKS557*"
+    expected_password = "POLITE_H@CKS557*" # Password for router
 
     # Check credentials
     if data.get("username") != expected_username or data.get("password") != expected_password:
