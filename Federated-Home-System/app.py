@@ -13,7 +13,6 @@ password = "POLITE_H@CKS557*"
 
 
 # Commands
-<<<<<<< HEAD
 commands = {
     "cpu_usage": "top -bn1 | grep 'CPU:'",
     "memory_usage": "free",
@@ -24,7 +23,8 @@ commands = {
     "device_list": "cat /tmp/dhcp.leases",
     "log_output": "logread",
     "bandwidth": "cat /proc/net/dev"
-=======
+}
+
 router_commands_map = {
     "mango": {
         "cpu_usage": "top -bn1 | grep 'CPU:'",
@@ -39,8 +39,6 @@ router_commands_map = {
     },
     # Add other routers here if needed
     # "some_other_router": { ... }
-
->>>>>>> bae7700e4cc64d35355f897bc6e7208fe482cb73
 }
 
 commands_berylax_ax3000 = {
