@@ -1,20 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import 'chart.js/auto'; // Ensures Chart.js is automatically registered
 
 const TrafficMonitoring = () => {
-  // Sample data for charts
-  const lineChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-    datasets: [
-      {
-        label: 'Network Traffic (MB)',
-        data: [65, 59, 80, 81, 56, 55],
-        fill: false,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        tension: 0.1,
-      },
-    ],
+  const [visibleChart, setVisibleChart] = useState('networkTrafficChart'); // 👈 initialize this early
+  const [bandwidthData, setBandwidthData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Get bandwidth
+  const fetchBandwidthData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/bandwidth");
+      const json = await res.json();
+      if (json.status === "Success") {
+        setBandwidthData(json.bandwidth);
+      }
+    } catch (err) {
+      console.error("Error fetching bandwidth data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      visibleChart === 'networkTrafficChart' ||
+      visibleChart === 'networkUsageChart'
+    ) {
+      fetchBandwidthData();
+    }
+  }, [visibleChart]);  
+
+  
+
+  // Network Traffic chart
+  const generateLineChartData = () => {
+    const labels = bandwidthData.map(d => d.interface);
+    const receive = bandwidthData.map(d => (d.receive_bytes / 1024 / 1024).toFixed(2)); // MB
+    const transmit = bandwidthData.map(d => (d.transmit_bytes / 1024 / 1024).toFixed(2)); // MB
+  
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Receive (MB)',
+          data: receive,
+          borderColor: 'rgba(75,192,192,1)',
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          tension: 0.3,
+        },
+        {
+          label: 'Transmit (MB)',
+          data: transmit,
+          borderColor: 'rgba(255,99,132,1)',
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          tension: 0.3,
+        },
+      ],
+    };
+  };
+
+  const generateUsageBarChart = () => {
+    const labels = bandwidthData.map(d => d.interface);
+    const received = bandwidthData.map(d => (d.receive_bytes / 1024 / 1024).toFixed(2));
+    const transmitted = bandwidthData.map(d => (d.transmit_bytes / 1024 / 1024).toFixed(2));
+  
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Received (MB)',
+          data: received,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1,
+        },
+        {
+          label: 'Transmitted (MB)',
+          data: transmitted,
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+        },
+      ],
+    };
   };
 
   const barChartData = {
@@ -30,8 +100,7 @@ const TrafficMonitoring = () => {
     ],
   };
 
-  // State to handle which chart is displayed
-  const [visibleChart, setVisibleChart] = useState('networkTrafficChart');
+ 
 
   // Function to show charts or tables
   const showChart = (chartId) => {
@@ -50,9 +119,16 @@ const TrafficMonitoring = () => {
 
         {/* Consistent chart container */}
         <div id="chartContainer" style={{ minHeight: '600px', height: 'auto' }}>
-          {visibleChart === 'networkTrafficChart' && (
-            <Line data={lineChartData} />
+        {visibleChart === 'networkTrafficChart' && (
+            <div id="networkTrafficChart">
+              {loading ? (
+                <p>Loading network traffic...</p>
+              ) : (
+                <Line data={generateLineChartData()} />
+              )}
+            </div>
           )}
+
           {visibleChart === 'networkUsageChart' && (
             <Bar data={barChartData} />
           )}
