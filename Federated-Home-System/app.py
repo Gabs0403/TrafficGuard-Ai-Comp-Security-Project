@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 from getRouterData import get_router_data_via_ssh
 import sqlite3
@@ -11,55 +11,59 @@ router_ip = "192.168.1.1"
 username = "root"
 password = "POLITE_H@CKS557*"
 
+
 # Commands
-router_commands_map = {
-    "mango": {
-        "cpu_usage": "top -bn1 | grep 'CPU:'",
-        "memory_usage": "free",
-        "wireless_clients": "iw dev wlan0 station dump",
-        "firewall_rules": "iptables -L -v",
-        "uptime_load": "uptime",
-        "network_config": "ifconfig",
-        "device_list": "cat /tmp/dhcp.leases",
-        "log_output": "logread",
-        "bandwidth": "cat /proc/net/dev"
-    },
-    # Add other routers here if needed
-    # "some_other_router": { ... }
+commands = {
+    "cpu_usage": "top -bn1 | grep 'CPU:'",
+    "memory_usage": "free",
+    "wireless_clients": "iw dev wlan0 station dump",  # Replace wlan0 with your interface name
+    "firewall_rules": "iptables -L -v",
+    "uptime_load": "uptime",
+    "network_config": "ifconfig",
+    "device_list": "cat /tmp/dhcp.leases",
+    "log_output": "logread",
+    "bandwidth": "cat /proc/net/dev"
 }
 
-current_commands = {}  # global placeholder for selected router's command set
+commands_berylax_ax3000 = {
+    "cpu_usage": "top -bn1 | grep 'CPU:'",
+    "memory_usage": "free",
+    "wireless_clients": "iw dev wlan0 station dump",  # Replace wlan0 with your interface name
+    "firewall_rules": "iptables -L -v",
+    "uptime_load": "uptime",
+    "network_config": "ifconfig",
+    "device_list": "cat /tmp/dhcp.leases",
+    "log_output": "logread",
+    "bandwidth": "cat /proc/net/dev"
+}
 
-# Get information from router
-@app.route("/api/send_router_information", methods=["POST"])
-def receive_router_info():
-    data = request.get_json()
+def router_commands(router):
 
-    # Expected credentials
-    expected_username = "root"
-    expected_password = "POLITE_H@CKS557*" # Password for router
+    commands = {}
 
-    # Check credentials
-    if data.get("username") != expected_username or data.get("password") != expected_password:
-        return jsonify({"message": "unauthorized"}), 401
+    if router == "Mango":
+        commands = commands_mango
 
-    # Get User inputs {'username': , 'password': ', 'ip_address': , 'router': }
-    router = data.get("router")
-    router_ip = data.get("ip_address") #global
-    
-    current_commands = router_commands_map[router] #global
+    elif router == "BerylAX":
+        commands = commands_berylax_ax3000
 
-    return jsonify({"message": "success"})
+    else:
+        print("[x] Ivalid router. Not able to select commands")
+
+    return commands
 
 
 @app.route('/api/data', methods=['GET'])
-def get_data(commands):
+def get_data():
     print('Request received!')
+
+    #commands = router_commands(router)
+
     try:
         # Fetch router data
-        network_log = get_router_data_via_ssh(router_ip, username, password, current_commands["log_output"])
-        device_list = get_router_data_via_ssh(router_ip, username, password, current_commands["device_list"])
-        general_info = get_router_data_via_ssh(router_ip, username, password, current_commands["network_config"])
+        network_log = get_router_data_via_ssh(router_ip, username, password, commands["log_output"])
+        device_list = get_router_data_via_ssh(router_ip, username, password, commands["device_list"])
+        general_info = get_router_data_via_ssh(router_ip, username, password, commands["network_config"])
 
         # Format the data to send as a JSON response
         data = {
