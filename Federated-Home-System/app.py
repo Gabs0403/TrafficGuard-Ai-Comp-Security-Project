@@ -12,8 +12,8 @@ load_dotenv()
 
 # Router connection details
 router_ip = ""
-username = "root"
-password = "POLITE_H@CKS557*"
+username = ""
+password = ""
 
 
 router_commands_map = {
@@ -59,11 +59,14 @@ def receive_router_info():
     router = data.get("router")
 
     # Setting Global Variables
-    global router_ip
+    global router_ip, commands, username, password
     router_ip = data.get("ip_address") #global
      
-    global commands 
     commands = router_commands_map[router] #global
+
+    username = os.getenv("EXPECTED_USERNAME")
+
+    password = os.getenv("EXPECTED_PASSWORD")
 
     print(commands)
  
