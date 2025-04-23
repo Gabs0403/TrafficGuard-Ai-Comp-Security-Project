@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const DeviceList = () => {
+const DeviceList = ({theme}) => {
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +30,7 @@ const DeviceList = () => {
 
   return (
     <div>
-      <table className="table table-striped">
+      <table className={`table table-striped ${theme === 'dark' ? 'table-dark' : ''}`}>
         <thead>
           <tr>
             <th>Lease Time</th>

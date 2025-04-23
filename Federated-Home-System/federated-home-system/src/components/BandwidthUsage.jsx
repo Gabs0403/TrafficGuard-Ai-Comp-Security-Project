@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const BandwidthUsage = () => {
+const BandwidthUsage = ({theme}) => {
   const [bandwidthData, setBandwidthData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,15 +25,15 @@ const BandwidthUsage = () => {
   }, []);
 
   return (
-    <div className="mt-4">
-      <div className="card mt-4">
+    <div className={`mt-4 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
+      <div className={`card mt-4 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
         <div className="card-body">
           <h3>📡 Bandwidth Usage</h3>
           {loading ? (
               <p>Loading bandwidth data...</p>
           ) : (
               <div>
-                <table className="table table-striped">
+                <table className={`table table-striped ${theme === 'dark' ? 'table-dark' : ''}`}>
                   <thead>
                   <tr>
                     <th>Interface</th>

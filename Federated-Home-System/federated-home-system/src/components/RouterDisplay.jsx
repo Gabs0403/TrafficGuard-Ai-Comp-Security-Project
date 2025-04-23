@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-function RouterDisplay()  {
+function RouterDisplay({ theme }) {
   const [info, setInfo] = useState(null);
 
   useEffect(() => {
@@ -8,20 +8,25 @@ function RouterDisplay()  {
       .then(res => res.json())
       .then(data => {
         if (data.message === "Success") {
-             
           setInfo(data);
         }
       });
   }, []);
 
+  const darkClass = theme === 'dark' ? 'bg-dark text-white' : '';
+
   return (
-    <div className="card mt-4">
-      <div className="card-body">
+    <div className={`card mt-4 ${darkClass}`}>
+      <div className={`card-body ${darkClass}`}>
         <h5 className="card-title">📡 Router Information</h5>
         {info ? (
           <ul className="list-group list-group-flush">
-            <li className="list-group-item"><strong>Router Model:</strong> {info.router_name}</li>
-            <li className="list-group-item"><strong>Router IP:</strong> {info.router_ip}</li>
+            <li className={`list-group-item ${darkClass}`}>
+              <strong>Router Model:</strong> {info.router_name}
+            </li>
+            <li className={`list-group-item ${darkClass}`}>
+              <strong>Router IP:</strong> {info.router_ip}
+            </li>
           </ul>
         ) : (
           <p>Loading router info...</p>

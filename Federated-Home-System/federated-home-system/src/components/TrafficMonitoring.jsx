@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import 'chart.js/auto'; // Ensures Chart.js is automatically registered
 
-const TrafficMonitoring = () => {
+const TrafficMonitoring = ({theme}) => {
   const [visibleChart, setVisibleChart] = useState('networkTrafficChart'); // 👈 initialize this early
   const [bandwidthData, setBandwidthData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -108,13 +108,34 @@ const TrafficMonitoring = () => {
   };
 
   return (
-    <div className="card">
-      <div className="card-body">
+    <div className={`card ${theme === 'dark' ? 'bg-dark text-white' : ''}`}>
+      <div className={`card-body ${theme === 'dark' ? 'bg-dark text-white' : ''}`}>
         <div className="d-flex gap-1 mb-3 border-bottom border-dark pb-3" role="group" aria-label="Traffic Monitoring Options">
           <h5 className="mt-2 me-3">📈 Network Trafficking: </h5>
-          <button type="button" className="btn btn-outline-dark" onClick={() => showChart('networkTrafficChart')}>Network Traffic</button>
-          <button type="button" className="btn btn-outline-dark" onClick={() => showChart('suspiciousTrafficTable')}>Suspicious Traffic</button>
-          <button type="button" className="btn btn-outline-dark" onClick={() => showChart('networkUsageChart')}>Network Usage</button>
+          <button
+            type="button"
+            className={`btn ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-dark'}`}
+            onClick={() => showChart('networkTrafficChart')}
+          >
+            Network Traffic
+          </button>
+
+          <button
+            type="button"
+            className={`btn ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-dark'}`}
+            onClick={() => showChart('suspiciousTrafficTable')}
+          >
+            Suspicious Traffic
+          </button>
+
+          <button
+            type="button"
+            className={`btn ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-dark'}`}
+            onClick={() => showChart('networkUsageChart')}
+          >
+            Network Usage
+          </button>
+
         </div>
 
         {/* Consistent chart container */}
@@ -124,18 +145,72 @@ const TrafficMonitoring = () => {
               {loading ? (
                 <p>Loading network traffic...</p>
               ) : (
-                <Line data={generateLineChartData()} />
+                <Line data={generateLineChartData()} 
+                options={{
+                  plugins: {
+                    legend: {
+                      labels: {
+                        color: theme === 'dark' ? '#fff' : '#000',
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: {
+                        color: theme === 'dark' ? '#fff' : '#000',
+                      },
+                      grid: {
+                        color: theme === 'dark' ? '#444' : '#ccc',
+                      },
+                    },
+                    y: {
+                      ticks: {
+                        color: theme === 'dark' ? '#fff' : '#000',
+                      },
+                      grid: {
+                        color: theme === 'dark' ? '#444' : '#ccc',
+                      },
+                    },
+                  },
+                }}/>
               )}
             </div>
           )}
 
           {visibleChart === 'networkUsageChart' && (
-            <Bar data={barChartData} />
+            <Bar data={barChartData} 
+            options={{
+              plugins: {
+                legend: {
+                  labels: {
+                    color: theme === 'dark' ? '#fff' : '#000',
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    color: theme === 'dark' ? '#fff' : '#000',
+                  },
+                  grid: {
+                    color: theme === 'dark' ? '#444' : '#ccc',
+                  },
+                },
+                y: {
+                  ticks: {
+                    color: theme === 'dark' ? '#fff' : '#000',
+                  },
+                  grid: {
+                    color: theme === 'dark' ? '#444' : '#ccc',
+                  },
+                },
+              },
+            }}/>
           )}
           {visibleChart === 'suspiciousTrafficTable' && (
             <div id="suspiciousTrafficTable">
               <p>Sample data for suspicious traffic (replace with your actual table):</p>
-              <table className="table table-striped">
+              <table className={`table table-striped ${theme === 'dark' ? 'table-dark' : ''}`}>
                 <thead>
                   <tr>
                     <th>#</th>
