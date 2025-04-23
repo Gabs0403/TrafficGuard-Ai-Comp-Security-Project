@@ -40,6 +40,10 @@ router_commands_map = {
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        # Allow preflight CORS requests through
+        if request.method == 'OPTIONS':
+            return f(*args, **kwargs)
+
         token = request.headers.get('Authorization')
         if not token:
             return jsonify({'message': 'Token is missing'}), 403
