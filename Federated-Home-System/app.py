@@ -119,6 +119,111 @@ def get_bandwidth():
         return jsonify({"status": "Success", "bandwidth": bandwidth_data})
     except Exception as e:
         return jsonify({"status": "Error", "error": str(e)})
+    
+@app.route("/api/devices", methods=["GET", "OPTIONS"])
+@token_required
+def get_devices():
+    try:
+        device_list = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, commands["device_list"])
+        devices = []
+        for line in device_list.strip().split("\n"):
+            parts = line.split()
+            if len(parts) >= 4:
+                devices.append({
+                    "lease_time": parts[0],
+                    "mac_address": parts[1],
+                    "ip_address": parts[2],
+                    "hostname": parts[3] if len(parts) > 3 else "Unknown",
+                })
+        return jsonify({"status": "Success", "devices": devices})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/logs", methods=["GET", "OPTIONS"])
+@token_required
+def get_logs():
+    try:
+        logs = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, commands["log_output"])
+        return jsonify({"status": "Success", "logs": logs})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/cpu_memory", methods=["GET", "OPTIONS"])
+@token_required
+def get_cpu_memory():
+    try:
+        cpu_output = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, commands["cpu_usage"])
+        memory_output = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, commands["memory_usage"])
+
+        cpu_data = {}
+        for part in cpu_output.split():
+            if "%" in part:
+                key, value = part.split("%")
+                cpu_data[key] = value
+
+        memory_lines = memory_output.strip().split("\n")
+        mem_data = {}
+        if len(memory_lines) >= 2:
+            headers = memory_lines[0].split()
+            values = memory_lines[1].split()
+            mem_data = dict(zip(headers, values))
+
+        return jsonify({"status": "Success", "cpu": cpu_data, "memory": mem_data})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/wireless_clients", methods=["GET", "OPTIONS"])
+@token_required
+def get_wireless_clients():
+    try:
+        wireless_clients = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, "iwinfo wlan0 assoclist")
+        if not wireless_clients.strip():
+            wireless_clients = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, "iw dev wlan0 station dump")
+        return jsonify({"status": "Success", "wireless_clients": wireless_clients})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/firewall_rules", methods=["GET", "OPTIONS"])
+@token_required
+def get_firewall_rules():
+    try:
+        rules = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, "iptables -L -v")
+        if not rules.strip():
+            rules = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, "cat /etc/config/firewall")
+        return jsonify({"status": "Success", "firewall_rules": rules})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/uptime_load", methods=["GET", "OPTIONS"])
+@token_required
+def get_uptime_load():
+    try:
+        uptime = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, commands["uptime_load"])
+        return jsonify({"status": "Success", "uptime_load": uptime})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/network_config", methods=["GET", "OPTIONS"])
+@token_required
+def get_network_config():
+    try:
+        config = get_router_data_via_ssh(router_ip, EXPECTED_USERNAME, EXPECTED_PASSWORD, commands["network_config"])
+        return jsonify({"status": "Success", "network_config": config})
+    except Exception as e:
+        return jsonify({"status": "Error", "error": str(e)})
+
+@app.route("/api/router-info", methods=["GET", "OPTIONS"])
+@token_required
+def get_router_info():
+    try:
+        return jsonify({
+            "message": "Success",
+            "router_ip": router_ip,
+            "router_name": "Mango"  # Adjust dynamically if needed
+        })
+    except Exception as e:
+        return jsonify({"message": "Error", "error": str(e)})
+
 
 # ----------------- DB Helpers -----------------
 
