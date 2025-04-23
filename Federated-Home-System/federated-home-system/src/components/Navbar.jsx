@@ -6,7 +6,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 function CollapsibleExample() {
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-      <Container>
+      <Container fluid>
         <Navbar.Brand href="#home">🏠 FrED IoT Home System</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -20,12 +20,18 @@ function CollapsibleExample() {
           </Nav>
           <Nav>
             <Nav.Link href="#notifications">Notifications</Nav.Link>
-            <Nav.Link eventKey={2} href="#account"
-              onClick={() => {
-                localStorage.removeItem("isFormSubmitted");
-                window.location.reload(); 
-              }}
-            >Exit ↪</Nav.Link>
+            <NavDropdown title="👤 Account" id="collapsible-nav-dropdown">
+              <NavDropdown.Item href="#profile">Router Info</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item
+                onClick={() => {
+                  localStorage.removeItem("isFormSubmitted");
+                  window.location.reload();
+                }}
+              >
+                Exit ↪
+              </NavDropdown.Item>
+            </NavDropdown>
           </Nav>
         </Navbar.Collapse>
       </Container>

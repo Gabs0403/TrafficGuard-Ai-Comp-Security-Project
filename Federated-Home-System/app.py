@@ -5,6 +5,7 @@ import sqlite3
 from dotenv import load_dotenv
 import os
 
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow requests from the React app
 
@@ -14,6 +15,7 @@ load_dotenv()
 router_ip = ""
 username = ""
 password = ""
+router = ""
 
 
 router_commands_map = {
@@ -56,6 +58,7 @@ def receive_router_info():
         return jsonify({"message": "unauthorized"}), 401
  
     # Get User inputs {'username': , 'password': ', 'ip_address': , 'router': }
+    global router
     router = data.get("router")
 
     # Setting Global Variables
@@ -71,6 +74,23 @@ def receive_router_info():
     print(commands)
  
     return jsonify({"message": "success"})
+
+
+
+@app.route('/api/router-info', methods=['GET'])
+def get_router_info():
+
+    if router == "mango":
+        router_name = "Mango Router"
+    elif router == "gl i-net":
+        router_name = "Beryl Router"
+
+    return jsonify({
+        "message": "Success",
+        "router_name": router_name,
+        "router_ip": router_ip
+    })
+    
 
 
 @app.route('/api/data', methods=['GET'])

@@ -14,7 +14,7 @@ const RouterInformation = ({ onFormSubmit }) => {
       const response = await fetch("http://127.0.0.1:5000/api/send_router_information", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // 👈 Needed for Flask to parse JSON
+          "Content-Type": "application/json", 
         },
         body: JSON.stringify({
           username: username, // input username 
@@ -101,7 +101,7 @@ const RouterInformation = ({ onFormSubmit }) => {
             </label>
             <select id="router" name="router" className="form-select" onChange={handleRouterChange}>
               <option value="mango">Mango Router</option>
-              <option value="gl i-net">GL iNet Router</option>
+              <option value="gl i-net">Beryl Router</option>
             </select>
           </div>
 

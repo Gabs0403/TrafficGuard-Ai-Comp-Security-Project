@@ -11,6 +11,7 @@ import ConsoleOutput from './components/console';
 import FetchDataButton from "./components/fetchData";
 import SystemData from './components/systemData';
 import RouterInformation from './components/RouterInformation';
+import RouterDisplay from './components/RouterDisplay';
 
 
 function App() {
@@ -40,13 +41,16 @@ function App() {
             <h3 className="mb-4">🛡️ Network & Device Security</h3>
             <SecurityCard />
             <DevicesAtRisk />
-            <h3 className='mt-4 mb-3'>🖳 System Console</h3>
-            <ConsoleOutput />
           </div>
           <div className="col-md-8">
             <TrafficMonitoring />
-            <DeviceList /> 
           </div>
+          <div>
+            <DeviceList /> 
+            <RouterDisplay/>
+          </div>
+          <h3 className='mt-4 mb-3'>🖳 System Console</h3>
+            <ConsoleOutput />
           <SystemData />
         </div>
       </div>
