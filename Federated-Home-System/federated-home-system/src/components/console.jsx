@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
 
-const ConsoleOutput = ({theme}) => {
+const ConsoleOutput = ({ theme }) => {
   const [logs, setLogs] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLogs = async () => {
+      const token = localStorage.getItem("token"); // 🔐 Get JWT token
+
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/logs'); // Flask API endpoint
+        const response = await fetch('http://127.0.0.1:5000/api/logs', {
+          method: "GET",
+          headers: {
+            "Authorization": token,
+          },
+        });
+
         const data = await response.json();
+
         if (data.status === 'Success') {
-          setLogs(data.logs); // Set the logs received from the API
+          setLogs(data.logs);
         } else {
           console.error('Error fetching logs:', data.error);
           setLogs('Error fetching logs. Please try again later.');

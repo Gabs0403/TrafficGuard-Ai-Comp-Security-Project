@@ -11,8 +11,16 @@ const SystemData = ({ theme }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchData = async (endpoint) => {
+    const token = localStorage.getItem("token"); // 🔐 Retrieve JWT token
+
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/${endpoint}`);
+      const response = await fetch(`http://127.0.0.1:5000/api/${endpoint}`, {
+        method: "GET",
+        headers: {
+          "Authorization": token,
+        },
+      });
+
       const result = await response.json();
       if (result.status === 'Success') {
         return result;
@@ -34,6 +42,7 @@ const SystemData = ({ theme }) => {
       const firewallRules = await fetchData('firewall_rules');
       const uptimeLoad = await fetchData('uptime_load');
       const networkConfig = await fetchData('network_config');
+
       setData({
         cpuMemory,
         wirelessClients,
@@ -63,7 +72,7 @@ const SystemData = ({ theme }) => {
       {/* CPU and Memory Usage Section */}
       <div className={`card mb-3 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
         <div className="card-body">
-        <h5>CPU Usage</h5>
+          <h5>CPU Usage</h5>
           <table className={`table table-striped ${theme === 'dark' ? 'table-dark' : ''}`}>
             <thead>
               <tr>
@@ -81,9 +90,8 @@ const SystemData = ({ theme }) => {
                 ))}
             </tbody>
           </table>
-          <div/>
-          <div className='card-body'/>
-          <h5>Memory Usage</h5>
+
+          <h5 className="mt-4">Memory Usage</h5>
           <table className={`table table-striped ${theme === 'dark' ? 'table-dark' : ''}`}>
             <thead>
               <tr>
@@ -101,20 +109,17 @@ const SystemData = ({ theme }) => {
                 ))}
             </tbody>
           </table>
-
         </div>
       </div>
 
-      <div className="row">
-        {/* Wireless Clients Section */}
-        <div className={`card mb-3 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
-          <div className="card-body">
-            <h5>📡 Wireless Clients</h5>
-            <hr />
-            <pre style={boxStyle}>
-              {data.wirelessClients?.wireless_clients || 'N/A'}
-            </pre>
-          </div>
+      {/* Wireless Clients Section */}
+      <div className={`card mb-3 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
+        <div className="card-body">
+          <h5>📡 Wireless Clients</h5>
+          <hr />
+          <pre style={boxStyle}>
+            {data.wirelessClients?.wireless_clients || 'N/A'}
+          </pre>
         </div>
       </div>
 

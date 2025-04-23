@@ -2,16 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import 'chart.js/auto'; // Ensures Chart.js is automatically registered
 
-const TrafficMonitoring = ({theme}) => {
-  const [visibleChart, setVisibleChart] = useState('networkTrafficChart'); // 👈 initialize this early
+const TrafficMonitoring = ({ theme }) => {
+  const [visibleChart, setVisibleChart] = useState('networkTrafficChart');
   const [bandwidthData, setBandwidthData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Get bandwidth
   const fetchBandwidthData = async () => {
     setLoading(true);
+    const token = localStorage.getItem("token"); // 🔐 Get JWT token
+
     try {
-      const res = await fetch("http://localhost:5000/api/bandwidth");
+      const res = await fetch("http://localhost:5000/api/bandwidth", {
+        method: "GET",
+        headers: {
+          "Authorization": token,
+        },
+      });
+
       const json = await res.json();
       if (json.status === "Success") {
         setBandwidthData(json.bandwidth);
@@ -30,16 +37,13 @@ const TrafficMonitoring = ({theme}) => {
     ) {
       fetchBandwidthData();
     }
-  }, [visibleChart]);  
+  }, [visibleChart]);
 
-  
-
-  // Network Traffic chart
   const generateLineChartData = () => {
     const labels = bandwidthData.map(d => d.interface);
-    const receive = bandwidthData.map(d => (d.receive_bytes / 1024 / 1024).toFixed(2)); // MB
-    const transmit = bandwidthData.map(d => (d.transmit_bytes / 1024 / 1024).toFixed(2)); // MB
-  
+    const receive = bandwidthData.map(d => (d.receive_bytes / 1024 / 1024).toFixed(2));
+    const transmit = bandwidthData.map(d => (d.transmit_bytes / 1024 / 1024).toFixed(2));
+
     return {
       labels,
       datasets: [
@@ -65,7 +69,7 @@ const TrafficMonitoring = ({theme}) => {
     const labels = bandwidthData.map(d => d.interface);
     const received = bandwidthData.map(d => (d.receive_bytes / 1024 / 1024).toFixed(2));
     const transmitted = bandwidthData.map(d => (d.transmit_bytes / 1024 / 1024).toFixed(2));
-  
+
     return {
       labels,
       datasets: [
@@ -100,9 +104,6 @@ const TrafficMonitoring = ({theme}) => {
     ],
   };
 
- 
-
-  // Function to show charts or tables
   const showChart = (chartId) => {
     setVisibleChart(chartId);
   };
@@ -119,7 +120,6 @@ const TrafficMonitoring = ({theme}) => {
           >
             Network Traffic
           </button>
-
           <button
             type="button"
             className={`btn ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-dark'}`}
@@ -127,7 +127,6 @@ const TrafficMonitoring = ({theme}) => {
           >
             Suspicious Traffic
           </button>
-
           <button
             type="button"
             className={`btn ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-dark'}`}
@@ -135,78 +134,63 @@ const TrafficMonitoring = ({theme}) => {
           >
             Network Usage
           </button>
-
         </div>
 
-        {/* Consistent chart container */}
         <div id="chartContainer" style={{ minHeight: '600px', height: 'auto' }}>
-        {visibleChart === 'networkTrafficChart' && (
+          {visibleChart === 'networkTrafficChart' && (
             <div id="networkTrafficChart">
               {loading ? (
                 <p>Loading network traffic...</p>
               ) : (
                 <Line data={generateLineChartData()} 
-                options={{
-                  plugins: {
-                    legend: {
-                      labels: {
-                        color: theme === 'dark' ? '#fff' : '#000',
+                  options={{
+                    plugins: {
+                      legend: {
+                        labels: {
+                          color: theme === 'dark' ? '#fff' : '#000',
+                        },
                       },
                     },
-                  },
-                  scales: {
-                    x: {
-                      ticks: {
-                        color: theme === 'dark' ? '#fff' : '#000',
+                    scales: {
+                      x: {
+                        ticks: { color: theme === 'dark' ? '#fff' : '#000' },
+                        grid: { color: theme === 'dark' ? '#444' : '#ccc' },
                       },
-                      grid: {
-                        color: theme === 'dark' ? '#444' : '#ccc',
-                      },
-                    },
-                    y: {
-                      ticks: {
-                        color: theme === 'dark' ? '#fff' : '#000',
-                      },
-                      grid: {
-                        color: theme === 'dark' ? '#444' : '#ccc',
+                      y: {
+                        ticks: { color: theme === 'dark' ? '#fff' : '#000' },
+                        grid: { color: theme === 'dark' ? '#444' : '#ccc' },
                       },
                     },
-                  },
-                }}/>
+                  }}
+                />
               )}
             </div>
           )}
 
           {visibleChart === 'networkUsageChart' && (
-            <Bar data={barChartData} 
-            options={{
-              plugins: {
-                legend: {
-                  labels: {
-                    color: theme === 'dark' ? '#fff' : '#000',
+            <Bar data={barChartData}
+              options={{
+                plugins: {
+                  legend: {
+                    labels: {
+                      color: theme === 'dark' ? '#fff' : '#000',
+                    },
                   },
                 },
-              },
-              scales: {
-                x: {
-                  ticks: {
-                    color: theme === 'dark' ? '#fff' : '#000',
+                scales: {
+                  x: {
+                    ticks: { color: theme === 'dark' ? '#fff' : '#000' },
+                    grid: { color: theme === 'dark' ? '#444' : '#ccc' },
                   },
-                  grid: {
-                    color: theme === 'dark' ? '#444' : '#ccc',
-                  },
-                },
-                y: {
-                  ticks: {
-                    color: theme === 'dark' ? '#fff' : '#000',
-                  },
-                  grid: {
-                    color: theme === 'dark' ? '#444' : '#ccc',
+                  y: {
+                    ticks: { color: theme === 'dark' ? '#fff' : '#000' },
+                    grid: { color: theme === 'dark' ? '#444' : '#ccc' },
                   },
                 },
-              },
-            }}/>
+              }}
+            />
           )}
+
           {visibleChart === 'suspiciousTrafficTable' && (
             <div id="suspiciousTrafficTable">
               <p>Sample data for suspicious traffic (replace with your actual table):</p>
