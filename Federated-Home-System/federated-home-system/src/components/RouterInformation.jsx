@@ -71,28 +71,28 @@ const RouterInformation = ({ onFormSubmit }) => {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="form-container p-4 bg-white rounded shadow" style={{ maxWidth: "400px", width: "100%" }}>
-        <h3 className="text-center mb-4">Login & Router Info</h3>
+        <h3 className="text-center mb-4 text-dark">Login & Router Info</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="username" className="form-label">Username:</label>
+            <label htmlFor="username" className="form-label text-dark">Username:</label>
             <input type="text" id="username" className="form-control" required
               value={username} onChange={(e) => setUsername(e.target.value)} />
           </div>
 
           <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password:</label>
+            <label htmlFor="password" className="form-label text-dark">Password:</label>
             <input type="password" id="password" className="form-control" required
               value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
 
           <div className="mb-3">
-            <label htmlFor="ip_address" className="form-label">IP Address:</label>
+            <label htmlFor="ip_address" className="form-label text-dark">IP Address:</label>
             <input type="text" id="ip_address" className="form-control" required
               value={ipAddress} onChange={handleIpChange} placeholder="000.000.000.000" />
           </div>
 
           <div className="mb-3">
-            <label htmlFor="router" className="form-label">Choose a router:</label>
+            <label htmlFor="router" className="form-label text-dark">Choose a router:</label>
             <select id="router" className="form-select" value={router} onChange={(e) => setRouter(e.target.value)}>
               <option value="mango">Mango Router</option>
               <option value="gl i-net">Beryl Router</option>
